@@ -70,7 +70,7 @@ async function registrarLancamento(usuario: Usuario): Promise<void> {
   const lancamento = finance.registrarLancamento(
     usuario.id,
     categoria,
-    Number(valorTexto),
+    Number(valorTexto.replace(',', '.')),
     data,
     descricao || undefined
   );

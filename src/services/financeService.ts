@@ -3,6 +3,16 @@ import { CategoriaRepository } from '../repositories/categoriaRepository.js';
 import { LancamentoRepository } from '../repositories/lancamentoRepository.js';
 import type { Categoria, Lancamento, ResumoMensal, TipoCategoria } from '../types.js';
 
+function dataValida(data: string): boolean {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(data);
+  if (!match) {
+    return false;
+  }
+  const mes = Number(match[2]);
+  const dia = Number(match[3]);
+  return mes >= 1 && mes <= 12 && dia >= 1 && dia <= 31;
+}
+
 export class FinanceService {
   private categorias: CategoriaRepository;
   private lancamentos: LancamentoRepository;
@@ -13,11 +23,15 @@ export class FinanceService {
   }
 
   criarCategoria(usuarioId: number, nome: string, tipo: TipoCategoria): Categoria {
-    const existente = this.categorias.buscarPorNome(usuarioId, nome);
-    if (existente) {
-      throw new Error(`Categoria "${nome}" já cadastrada.`);
+    const nomeNormalizado = nome.trim();
+    if (!nomeNormalizado) {
+      throw new Error('Nome da categoria não pode ser vazio.');
     }
-    return this.categorias.criar({ usuarioId, nome, tipo });
+    const existente = this.categorias.buscarPorNome(usuarioId, nomeNormalizado);
+    if (existente) {
+      throw new Error(`Categoria "${nomeNormalizado}" já cadastrada.`);
+    }
+    return this.categorias.criar({ usuarioId, nome: nomeNormalizado, tipo });
   }
 
   listarCategorias(usuarioId: number): Categoria[] {
@@ -31,6 +45,12 @@ export class FinanceService {
     data: string,
     descricao?: string
   ): Lancamento {
+    if (!Number.isFinite(valor) || valor <= 0) {
+      throw new Error('Valor do lançamento deve ser um número maior que zero.');
+    }
+    if (!dataValida(data)) {
+      throw new Error('Data inválida. Use o formato AAAA-MM-DD.');
+    }
     const categoria = this.categorias.buscarPorNome(usuarioId, nomeCategoria);
     if (!categoria) {
       throw new Error(`Categoria "${nomeCategoria}" não encontrada. Cadastre-a antes de lançar.`);
