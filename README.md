@@ -196,14 +196,49 @@ src/
 
 ## 12. Como Executar
 
+O sistema é interativo: ao rodar `npm start`, ele pergunta primeiro se você já possui
+uma conta e conduz o cadastro/login respondendo perguntas no terminal (nome, login,
+senha, categoria, valor, data etc.), em vez de passar argumentos via linha de comando.
+
 ```bash
 npm install
-npm start -- registrar --login aa --senha 123456 --nome "Aa Aa"
-npm start -- login --login aa --senha 123456
-npm start -- categoria criar --login aa --nome Alimentacao --tipo despesa
-npm start -- categoria criar --login aa --nome Salario --tipo receita
-npm start -- categoria listar --login aa
-npm start -- lancar --login aa --categoria Alimentacao --valor 45.90 --data 2026-08-20 --descricao "Mercado"
-npm start -- lancar --login aa --categoria Salario --valor 3000 --data 2026-08-05
-npm start -- resumo --login aa --mes 2026-08
+npm start
 ```
+
+Fluxo típico:
+
+```
+=== Sistema de Gestão de Finanças Pessoais ===
+Você já possui uma conta? (S/N, ou 0 para sair): N
+Nome: Aa Aa
+Login: aa
+Senha: 123456
+Usuário "Aa Aa" cadastrado com sucesso!
+
+--- Menu (Aa Aa) ---
+1. Criar categoria
+2. Listar categorias
+3. Registrar lançamento
+4. Resumo mensal
+5. Sair da conta
+0. Encerrar programa
+Escolha uma opção: 1
+Nome da categoria: Alimentacao
+Tipo (1-Receita / 2-Despesa): 2
+```
+
+Se responder `S`, o sistema pede apenas login e senha (fluxo de login).
+
+### Seed (dados de exemplo)
+
+Para popular o banco com um usuário e dados de teste prontos, sem precisar cadastrar
+tudo manualmente:
+
+```bash
+npm run seed
+```
+
+Isso cria (ou reaproveita, se já existir) o usuário `demo` / senha `123456`, com
+categorias (Salario, Freelance, Alimentacao, Transporte, Lazer) e alguns lançamentos
+de agosto/2026. É seguro rodar mais de uma vez: não duplica usuário, categorias nem
+lançamentos.
